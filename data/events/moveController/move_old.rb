@@ -15,8 +15,110 @@ def checkVectorArr(vectorArr,objectToMove)
     }
     return true
 end
+def checkCanMoveLine(vectorArr,objectToMove,dist,dir)
+    impassLineArr = []
+    case dir
+    when "up"
+        vectorArr.each{|impass|
+           if impass.x == objectToMove.x && impass.y < objectToMove.y && impass.y >= (objectToMove.y-dist)
+                impassLineArr.push(impass)
+           end
+        }
+    when "down"
+        vectorArr.each{|impass|
+            if impass.x == objectToMove.x && impass.y > objectToMove.y && impass.y <= (objectToMove.y+dist)
+                impassLineArr.push(impass)
+            end
+         }
+    when "left"
+        vectorArr.each{|impass|
+            if impass.y == objectToMove.y && impass.x < objectToMove.x && impass.x >= (objectToMove.x-dist)
+                impassLineArr.push(impass)
+            end
+         }
+    when "right"
+        vectorArr.each{|impass|
+            if impass.y == objectToMove.y && impass.x > objectToMove.x && impass.x <= (objectToMove.x-dist)
+                impassLineArr.push(impass)
+            end
+         }
+    end
+    if impassLineArr.length > 0
+        return [false,impassLineArr]
+    else
+        return true
+    end
+end
+def pathNext(objectToMove,objectToFollow,vectorArr)
+    vectorFollow = Vector2.new(objectToFollow.x/32,objectToFollow.y/32)
+    vectorToMove = Vector2.new(objectToMove.x/32,objectToMove.y/32)
+    vectorX = vectorToMove.x - vectorFollow.x
+    vectorY = vectorToMove.y - vectorFollow.y
+    checkUp = checkCanMoveLine(vectorArr,objectToMove,(vectorY).abs,"up")
+    checkDown = checkCanMoveLine(vectorArr,objectToMove,(vectorY).abs,"up")
+    checkLeft = checkCanMoveLine(vectorArr,objectToMove,(vectorY).abs,"up")
+    check = checkCanMoveLine(vectorArr,objectToMove,(vectorY).abs,"up")
+    if checkUp != true
+        checkUp[1].sort_by { |event| event.y }
+        upDist = vectorToMove.y - checkRight[1].y 
+       if upDist >= (vectorX).abs 
+        
+       elsif upDist >= ((vectorY).abs*0.5)
 
+       else
 
+       end
+    end
+    checkDown = checkCanMoveLine(vectorArr,objectToMove,(vectorY).abs,"down")
+    if checkDown != true
+        downDist = (vectorToMove.y - checkRight[1].y).abs 
+    end
+    checkRight = checkCanMoveLine(vectorArr,objectToMove,(vectorX).abs,"right")
+    if checkRight != true
+        rightDist = (vectorToMove.x - checkRight[1].x).abs 
+    end
+    checkLeft = checkCanMoveLine(vectorArr,objectToMove,(vectorX).abs,"left")
+    if checkLeft != true
+        leftDist = vectorToMove.x - checkRight[1].x 
+    end
+    if (vectorX).abs > (vectorY).abs #more horizontal
+        if vectorX < 0  # more to right
+            if checkRight == true
+                return ["right",(vectorX).abs]
+            else
+               if rightDist >= (vectorY).abs || rightDist > 
+                    return ["right",rightDist]
+               else
+                
+               end
+            end
+        else            # more to left
+            if checkLeft == true
+                return ["left",(vectorX).abs]
+            else
+                if leftDist >= (vectorY).abs
+                    return ["left",leftDist]
+                else
+                    
+                end
+            end
+        end
+    else                 #----------- More Vertical
+        if vectorY < 0 #more below
+            if checkDown == true
+                return ["down",(vectorY).abs]
+            else
+                
+            end
+        else            #more above
+            if checkUp == true
+                return ["up",(vectorY).abs]
+            else
+                
+            end
+        end
+    end
+end
 def calculatePath(objectToMove,objectToFollow)
     done = false
     vectorArr = MoveCollision.new.vectorArray

@@ -1,5 +1,5 @@
 class Map_Base
-    attr_accessor :w, :h, :events, :theMap, :mapTiles,:playersDraw
+    attr_accessor :w, :h, :events, :theMap, :mapTiles,:playersDraw, :blockedTiles
     def initialize(tileset,width,height,file,layers=5) 
         @mapTiles = tileset
         @events = []
@@ -14,6 +14,16 @@ class Map_Base
         @camera_x = @camera_y = 0
         @player = $scene_manager.scene["player"]
         draw_tile_loop()
+        @blockedTiles = @mapTiles.impassableTiles
+        @frameNum = 0
+    end
+    def currentBlockedTiles()
+        @blockedTiles = @mapTiles.impassableTiles
+        @events.each{|e|
+            if e.passible == false
+                @blockedTiles.push(e)
+            end
+        }
     end
     def draw_tile_loop()
         mapArrayY = @mapfile['draw']
@@ -53,9 +63,14 @@ class Map_Base
                 @events.delete_at(index)
             end
         }
+        if @frameNum >= 60
+            currentBlockedTiles()
+            @frameNum = 0
+        end
     end
 
     def draw()
+        @frameNum += 1
         Gosu.translate(-@camera_x, -@camera_y) do
             @theMapRecord.draw(0,0,0)
             @playersDraw.call()

@@ -12,7 +12,7 @@ class Event_Core
         @imgName = imgName
         @facing = "down"
         @vector = Vector2.new(0, 0)
-        @bbWidth,@bbHeight = bbWidth, bbHeight
+        @w,@h = bbWidth, bbHeight
         @columns,@rows = columns, rows
         @bestiaryName = battleCoreName
     end

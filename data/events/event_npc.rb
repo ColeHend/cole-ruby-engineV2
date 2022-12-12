@@ -1,28 +1,31 @@
 require_relative "battle/battle_core.rb"
 require_relative "event_core.rb"
 class Event_NPC < Event_Core
-    attr_accessor :stats
+    attr_accessor :stats, :object, :moveType, :targetObject
     include Animate
     def initialize(mapNumber,eventName,x,y,activateType,currPage,activateEvent,imgName,bbHeight,bbWidth,facing="downStop")
         super(mapNumber,eventName,x,y,activateType,currPage,activateEvent,imgName,4,4,bbHeight,bbWidth)
         @stats = Battle_Core.new(eventName)
-        @moveType = "none"
-        @moveController = nil
+        @moveType = "random" # "follow" or "random" or "none"
+        @targetObject = nil # need a target to "follow"
         @facing = facing
-        @object = GameObject.new(self.x,self.y,self.bbWidth,self.bbHeight,self.imgName,nil,self.columns,self.rows)
+        @object = GameObject.new(self.x,self.y,self.w,self.h,self.imgName,nil,self.columns,self.rows)
+        @moveController = Move_NPC.new(@object,@moveType)
+            
     end
-    def setMoveRandom(distance)
-        @moveType = "random"
-        randomDir = rand(4)
-        @moveControl.RandomMove(self.vector,self,dist,[],self.facing,Gosu::milliseconds())
-    end
-    def setMoveFollow(distance,objectOfFocus)
-        @moveType = "newFollow"
-        if @eventObject.w != nil || @eventObject.h != nil
-            #  newFollow(attackerClass,objectToMove,vectorToMove,objectToFollow,moveArray)
-            vector2 = Vector2.new(0, 0)
-            @moveControl.newFollow(self,@eventObject,vector2,focus(dist,objectOfFocus),@moveArray)
-          end
+    def easy_move_set()
+        case @moveType
+        when "random"
+            @moveController.set_move()
+        when "follow"
+            if @targetObject != nil # for follow
+                @moveController.set_move(@targetObject,@facing)
+            end
+        when "none"
+            @moveController.set_move()
+        else
+            
+        end
     end
     def setMoveAttack(distance,objectOfFocus,atkType)
         if @eventObject.w != nil || @eventObject.h != nil
@@ -32,15 +35,13 @@ class Event_NPC < Event_Core
           end
     end
     def update
-        if @moveType != "none"
-            @moveController.update()
-        end
-        @object.update()
+        # makes sure the @moveType is set right in the @moveController
+        easy_move_set()
+        # creates a path for the npc to move to
+        @moveController.update()
     end
     def draw
-        if @moveType != "none"
-            @moveController.draw()
-        end
-        draw_character(@object, @facing,6)
+        # executes the move path for the npc
+        @moveController.draw()
     end
 end
