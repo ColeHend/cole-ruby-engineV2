@@ -35,7 +35,7 @@ class Move_NPC
     end
     def move(direction,speed=1,timing = 6)
         vector = vector2.new(0,0)
-        collisionDetect = MoveCollision.new(@name)
+        collisionDetect = MoveCollision.new(@objectToMove)
         
         case direction
             when "down"

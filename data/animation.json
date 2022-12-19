@@ -1,0 +1,78 @@
+[
+    {
+      "animationName": "slash",
+      "imgName": "Weapon04",
+      "col": 5,
+      "row": 5,
+      "xOff" : [3,3,4,1.8], 
+      "yOff": [3,2,2,2],
+      "interval": 1,
+      "frames": [ 0, 1, 2, 3, 4 ],
+      "sound": "sword",
+      "soundExt": ".ogg"
+    },
+    {
+      "animationName": "fire",
+      "imgName": "fire",
+      "col": 5,
+      "row": 2,
+      "xOff" : [2.5,2.5,4.2,0.5], 
+      "yOff": [4,0,2,2.5],
+      "interval": 1,
+      "frames": [ 0, 1, 2, 3 ],
+      "sound": "explosion",
+      "soundExt": ".ogg"
+    },
+    {
+      "animationName": "fireExplosion",
+      "imgName": "fireExplosion",
+      "col": 5,
+      "row": 2,
+      "interval": 1,
+      "frames": [ 0, 1, 2, 3, 4, 5 ],
+      "sound": "explosion",
+      "soundExt": ".ogg"
+    },
+    {
+      "animationName": "earthExplosion",
+      "imgName": "Earth1",
+      "col": 5,
+      "row": 2,
+      "interval": 1,
+      "frames": [ 0, 1, 2, 3, 4, 5, 6 ],
+      "sound": "explosion",
+      "soundExt": ".ogg"
+    },
+    {
+      "animationName": "electricShock",
+      "imgName": "ThunderShock",
+      "col": 5,
+      "row": 2,
+      "interval": 1,
+      "frames": [ 0, 1, 2, 3, 4, 5, 6 ],
+      "sound": null,
+      "soundExt": ".ogg"
+    },
+    {
+      "animationName": "blunt",
+      "imgName": "bluntWeapon",
+      "col": 5,
+      "row": 2,
+      "xOff" : [1,1,2,0], 
+      "yOff": [1.5,0,2,0.75],
+      "interval": 1,
+      "frames": [ 0, 1, 2, 3 ],
+      "sound": "hit",
+      "soundExt": ".ogg"
+    },
+    {
+      "animationName": "magicCircle",
+      "imgName": "Action01",
+      "col": 5,
+      "row": 2,
+      "interval": 2,
+      "frames": [ 0, 2, 3, 4],
+      "sound": null,
+      "soundExt": ".ogg"
+    }
+  ]

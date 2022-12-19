@@ -1,7 +1,7 @@
 class Battle_Equipment
     attr_accessor :weapon, :shield, :helm, :necklace, :chest, :hands, :legs, :feet
     attr_reader :totalArmor
-    def initialize(weapon=Weapon.new("Big Stick","bigStick",1,"blunt"),shield=nil,helm=nil,necklace=nil,chest=nil,hands=nil,legs=nil,feet=nil)
+    def initialize(weapon=nil,shield=nil,helm=nil,necklace=nil,chest=nil,hands=nil,legs=nil,feet=nil)
         @weapon = weapon
         @shield = shield
         @helm = helm

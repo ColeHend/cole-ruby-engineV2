@@ -9,6 +9,7 @@ class Map_Base
         @playerDraw = ->(){
             
         }
+        @runEffects = []
         @theMap = Map.new(32, 32, width, height, 800, 600, false, true)
         @mapfile = file
         @camera_x = @camera_y = 0
@@ -63,6 +64,11 @@ class Map_Base
                 @events.delete_at(index)
             end
         }
+        if @runEffects.length > 0
+          @runEffects.each {|effect|
+              effect.draw(nil,1,1,0xff,0xffffff,nil)
+          }
+        end
         if @frameNum >= 60
             currentBlockedTiles()
             @frameNum = 0
@@ -86,6 +92,15 @@ class Map_Base
                 @player.draw
             end
             @theMapRecordTop.draw(0,0,0)
+            if @runEffects.length > 0
+              @runEffects.each_with_index {|effect,index|
+                  if effect.dead
+                      @runEffects.delete_at(index)
+                  else
+                      effect.update
+                  end
+              }
+          end
         end
     end
 end

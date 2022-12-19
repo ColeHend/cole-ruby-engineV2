@@ -11,7 +11,9 @@ class Event_NPC < Event_Core
         @facing = facing
         @object = GameObject.new(self.x,self.y,self.w,self.h,self.imgName,nil,self.columns,self.rows)
         @moveController = Move_NPC.new(@object,@moveType)
-            
+        @nature = "neutral"
+        @detectRange = 3*32
+        @actionController = Action_Core.new(@object,@stats,@moveType,@targetObject,@detectRange,@nature)    
     end
     def easy_move_set()
         case @moveType
@@ -35,6 +37,7 @@ class Event_NPC < Event_Core
           end
     end
     def update
+        @actionController.update()
         # makes sure the @moveType is set right in the @moveController
         easy_move_set()
         # creates a path for the npc to move to
@@ -43,5 +46,6 @@ class Event_NPC < Event_Core
     def draw
         # executes the move path for the npc
         @moveController.draw()
+        @actionController.draw()
     end
 end

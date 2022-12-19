@@ -1,11 +1,20 @@
 class Scene_Manager
-    attr_accessor :windowskin, :currentScene, :input
+    attr_accessor :windowskin, :currentScene, :input,:theEffects
     def initialize
         @windowskin = "fancyWindowSkin"
         @scenes = Hash.new
         @input = Input.new
         @windowskins = []
         @tilesets = []
+        @animations = JSON.load(File.read("../../animation.json"))
+        @animations.each{|anim|
+            @theEffects[anim.animationName] = [
+                Effect.new(x-(anim.xOff[0]*32), y-(anim.yOff[0]*32), anim.imgName, anim.row, anim.col, anim.interv, anim.frames,nil,anim.sound,anim.soundExt,nil),#up
+                Effect.new(x-(anim.xOff[1]*32), y-(anim.yOff[1]*32), anim.imgName, anim.row, anim.col, anim.interv, anim.frames,nil,anim.sound,anim.soundExt,:vert),#down
+                Effect.new(x-(anim.xOff[2]*32), y-(anim.yOff[2]*32), anim.imgName, anim.row, anim.col, anim.interv, anim.frames,nil,anim.sound,anim.soundExt,nil),#left
+                Effect.new(x-(anim.xOff[3]*32), y-(anim.yOff[3]*32), anim.imgName, anim.row, anim.col, anim.interv, anim.frames,nil,anim.sound,anim.soundExt,:horiz)#right
+            ]
+        }
         @startScenes = [["titlescreen",TitleScreen.new()],["map",Scene_Map.new()]]
         @startWindowSkins = ["fancyWindowSkin","earthboundWindowSkin","blackWindowSkin"]
         @startTilesets = [["CastleTownTileset",:CastleTown,8,23]]

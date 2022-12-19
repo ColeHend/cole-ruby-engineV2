@@ -58,7 +58,7 @@ class Move_Controller
         vector = Vector2.new(0, 0)
         vector.x = 0
         vector.y = 0
-        collisionDetect = MoveCollision.new(@name)
+        collisionDetect = MoveCollision.new(@object)
         
         case @facing
             when "down"
