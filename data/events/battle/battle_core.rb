@@ -1,4 +1,4 @@
-require_relative "battle/battle_equipment.rb"
+require_relative "./battle_equipment.rb"
 class Battle_Core
     attr_accessor :currentHP, :alive, :exp, :playerLevel,:enemyGroups, :hateGroup
     attr_accessor :knownSpells, :currentSpell, :allSpells

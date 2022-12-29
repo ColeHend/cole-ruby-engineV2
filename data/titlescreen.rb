@@ -1,13 +1,14 @@
+require_relative "./window_tools.rb"
+include Window_Tools
 class TitleScreen
-    include Window_Tools
     def initialize()
         @gameName = Gosu::Image.from_text("The Game", 30)
         @instructions = Gosu::Image.from_text("Press space to continue", 20)
-        @input = $scene_manager.input
+        #@input = $scene_manager.input
         @white = Gosu::Color.argb(0xff_ffffff)
         @black = Gosu::Color.argb(0xff_000000)
         @choice = [Option.new("New Game",->(){
-            $scene_manager = SceneManager.new()
+            $scene_manager = Scene_Manager.new
             $scene_manager.startUp()
             
             $scene_manager.input.addToStack("map")

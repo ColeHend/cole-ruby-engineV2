@@ -1,6 +1,6 @@
 require_relative "../../events/move_collision.rb"
-require_relative "../../events/movement_control.rb"
-require_relative "../../../files/animate.rb"
+require_relative "../../events/moveController/move_controller.rb"
+require_relative "../../animate.rb"
  
 class Spell
     include Animate
@@ -87,6 +87,7 @@ class Spell
                 ranged_shot("right")
             end
         when "autoEffect"
+        end
     end
     def update
         if @eventBase != nil
@@ -97,4 +98,5 @@ class Spell
         if @eventBase != nil
             @eventBase.draw()
         end
+    end
 end

@@ -1,17 +1,18 @@
 class Scene_Map
-    attr_accessor :runEffects
+    attr_accessor :runEffects, :allMaps, :currentMap, :mWidth, :mHeight
     def initialize
-        @currentMap
-        @mWidth = @currentMap.width 
-        @mHeight = @currentMap.height 
+        @allMaps = [Map01.new]
+        @currentMap = @allMaps[0]
+        @mWidth = @currentMap.w
+        @mHeight = @currentMap.h 
         
     end
     def update
-        @currentMap.map.update()
+        @currentMap.update()
         
     end
     def draw
-        @currentMap.map.draw()
+        @currentMap.draw()
         
     end
 end

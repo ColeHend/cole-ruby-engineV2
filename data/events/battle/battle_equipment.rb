@@ -1,3 +1,4 @@
+require_relative "./equipment/armor.rb"
 class Battle_Equipment
     attr_accessor :weapon, :shield, :helm, :necklace, :chest, :hands, :legs, :feet
     attr_reader :totalArmor
@@ -13,8 +14,8 @@ class Battle_Equipment
         @totalArmor = total_ac(0)
     end
     def getMod(stat)
-        modifier = ((stat - 10))
-        return modifier
+        #modifier = stat - 10
+        return stat.to_i - 10
     end
     def total_ac(modifier = 0)
         totalAC = 5 + (2 * getMod(@dex))

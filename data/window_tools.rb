@@ -1,5 +1,5 @@
 module Window_Tools
-    require_relative "input_trigger.rb"
+    require_relative "./input/input_module.rb"
     def create_window(x,y,width,height) #use the same grid pattern as events use ("fancyWindowSkin",,0,0,0,0,6,4)
         @windowSkin = GameObject.new(0,0, 0, 0, $scene_manager.windowskin, nil, 6, 4)
         for a in (0..width) do
@@ -49,7 +49,6 @@ module Window_Tools
     class OptionsBox
         attr_accessor :notCurrentColor, :currentColor, :hidden
         attr_reader :currentOp, :stackName
-        include WindowBase
         @@boxNumber = 0
         def initialize(x=400,y=225,width=70,height=70,choice,done)
             #@stackName = stackName
@@ -77,7 +76,7 @@ module Window_Tools
             @colors = Array.new(40,@notCurrentColor)
             @colors[0] = @currentColor
             @buttondown = 0
-            @player = $scene_manager.scene["player"]
+            #@player = $scene_manager.scene["player"]
             #$can_move = !@drawDialog
         end
     

@@ -1,4 +1,5 @@
 class Move_NPC
+    attr_accessor :moveArray
     def initialize(objectToMove,moveType)
         @objectToMove = objectToMove
         @moveType = moveType
@@ -9,11 +10,7 @@ class Move_NPC
         @vectorFollow 
         @vectorX
         @vectorY
-        @impassArr = $scene_manager.currentMap.blockedTiles
-        @passMap = Array.new($scene_manager.currentMap.w,Array.new($scene_manager.currentMap.h,true))
-        @impassArr.each{|e|#make impass row
-            @passMap[e.y][e.x] = false
-        }
+        
         speed = 0.25
         time = 10
         @moveLeft = ->(){
@@ -371,7 +368,11 @@ class Move_NPC
         end
     end
     def update
-        @impassArr = $scene_manager.currentMap.blockedTiles
+        @impassArr = $scene_manager.scenes["map"].currentMap.blockedTiles
+        @passMap = Array.new($scene_manager.scenes["map"].currentMap.w,Array.new($scene_manager.scenes["map"].currentMap.h,true))
+        $scene_manager.scenes["map"].currentMap.blockedTiles.each{|e|#make impass row
+            @passMap[e.y][e.x] = false
+        }
         if @moveArray.length == 0
             @moveUpdate.call()
         end

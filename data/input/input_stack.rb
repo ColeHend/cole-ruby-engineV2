@@ -56,7 +56,6 @@ class Input
             end
         end
     end
-    end
 
     def update
 

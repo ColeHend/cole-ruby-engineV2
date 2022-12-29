@@ -59,6 +59,5 @@ module Path_Calc
                 end
             end
         end
-        end
     end
 end

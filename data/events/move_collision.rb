@@ -15,7 +15,7 @@ class MoveCollision
         return true
     end
     def closestBlocked()
-        @impassArr = $scene_manager.currentMap.blockedTiles
+        @impassArr = $scene_manager.scenes["map"].currentMap.blockedTiles
         arrByClose = []
         arrToReturn = []
         @impassArr.each{|evt|

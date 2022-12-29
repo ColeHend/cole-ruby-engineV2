@@ -7,7 +7,7 @@ class Action_Core
         @detection = MoveCollision.new(@actionObject)
         
         @range = range
-        @evtsInRange = @detection.check_range(@range,true)
+        
         @state = state
     end
 
@@ -46,6 +46,7 @@ class Action_Core
         end
     end
     def update
+        @evtsInRange = @detection.check_range(@range,true)
     end
 
     def draw

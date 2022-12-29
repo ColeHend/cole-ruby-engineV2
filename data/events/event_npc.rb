@@ -1,4 +1,5 @@
 require_relative "battle/battle_core.rb"
+require_relative "./actionController/action_core.rb"
 require_relative "event_core.rb"
 class Event_NPC < Event_Core
     attr_accessor :stats, :object, :moveType, :targetObject
@@ -10,6 +11,7 @@ class Event_NPC < Event_Core
         @targetObject = nil # need a target to "follow"
         @facing = facing
         @object = GameObject.new(self.x,self.y,self.w,self.h,self.imgName,nil,self.columns,self.rows)
+        # puts($scene_manager.allMaps[mapNumber-1].mWidth)
         @moveController = Move_NPC.new(@object,@moveType)
         @nature = "neutral"
         @detectRange = 3*32
