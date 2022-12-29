@@ -33,16 +33,20 @@ class MoveCollision
         allInRange = []
         nearby = closestBlocked()
         nearby.each_with_index{|item,index|
-            if (range + 6) >= (@objectToMove.y + (@objectToMove.h) - (item.y + item.h)).abs && ((@objectToMove.x) - item.x).abs <= (range - 16)
-                if overlap?(((item.x)...(item.x+item.w)),((@objectToMove.x)...(@objectToMove.x+@objectToMove.w))) == true && overlap?(((item.y)...(item.y+item.h)),((@objectToMove.y)...(@objectToMove.y+@objectToMove.h))) == true
-                    allInRange.push(item)
-                end 
-            end
-            if (range) >= ((eventY) - targetY).abs && ((eventX+eventW) - targetX).abs <= (range)
-                if  overlap?(((item.y)...(item.y+item.h)),((@objectToMove.y+16)...(@objectToMove.y+@objectToMove.h))) == true && overlap?(((item.x)...(item.x+item.w)),((@objectToMove.x)...(@objectToMove.x+@objectToMove.w))) == true
-                    allInRange.push(item)
+            # if !item.is_a?(Block)
+                objWtoM = 46 or item.w
+                objHtoM = 31 or item.h
+                if (range + 6) >= (@objectToMove.y + (objHtoM) - (item.y + item.h)).abs && ((@objectToMove.x) - item.x).abs <= (range - 16)
+                    if overlap?(((item.x)...(item.x+item.w)),((@objectToMove.x)...(@objectToMove.x+objWtoM))) == true && overlap?(((item.y)...(item.y+item.h)),((@objectToMove.y)...(@objectToMove.y+objHtoM))) == true
+                        allInRange.push(item)
+                    end 
                 end
-            end
+                if (range) >= ((@objectToMove.y) - item.y).abs && ((@objectToMove.x+objWtoM) - item.x).abs <= (range)
+                    if  overlap?(((item.y)...(item.y+item.h)),((@objectToMove.y+16)...(@objectToMove.y+objHtoM))) == true && overlap?(((item.x)...(item.x+item.w)),((@objectToMove.x)...(@objectToMove.x+objWtoM))) == true
+                        allInRange.push(item)
+                    end
+                end
+            # end
         }
         if removeBlock == true
             toRemove = []
@@ -60,7 +64,8 @@ class MoveCollision
         end
     end
     def check_surrounding(dir,rangeBoost=0)
-        checkRange = checkR[1] = check_range(rangeBoost)
+        checkR = check_range(rangeBoost)
+        checkRange = checkR[1]
         toReturn = []
         if checkRange.length > 0
             if dir == "all"
@@ -79,18 +84,32 @@ class MoveCollision
                     end
                 }
             else
-                checkRange.each{|item|
+                theRange = checkRange.select{|item| 
+                    case dir
+                    when "up"
+                        return item.y < @objectToMove.y
+                    when "down"
+                        return item.y > @objectToMove.y
+                    when "left"
+                        return item.x < @objectToMove.x
+                    when "right"
+                        return item.x > @objectToMove.x
+                    end
+                }
+                theRange.each{|item|
                     case dir
                     when "up"
                         if item.x == @objectToMove.x && item.y < @objectToMove.y
                             toReturn.push(item)
                         end
                     when "down"
-                        if item.x == @objectToMove.x && item.y < @objectToMove.y
+                        if item.x == @objectToMove.x && item.y > @objectToMove.y
                             toReturn.push(item)
                         end
                     when "right"
-                        if item.x > @objectToMove.x && item.y == @objectToMove.y
+                        newer = item.x > @objectToMove.x 
+                        puts((@objectToMove.x - item.x).abs)
+                        if (@objectToMove.x - item.x).abs >= 1 && item.y == @objectToMove.y
                             toReturn.push(item)
                         end
                     when "left"

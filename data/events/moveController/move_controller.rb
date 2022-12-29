@@ -1,19 +1,27 @@
 class Move_Controller
-    def initialize(object,facing)
+    include Animate
+    def initialize(object,facing,sprite)
         @object = object
         @facing = facing
+        @sprite = sprite
         @speed = 0.75
         @animationTime = 7
+        @state = "stop"
+        @input = $scene_manager.input
     end
-    def setMoveState(state)
-        case state
+    def setMoveState()
+        case @state
         when "moving"
-            draw_character(@object, @facing ,@animationTime)
+            # puts("player state: #{@state}")
+            @sprite.draw()
+            draw_character(@sprite, @facing ,@animationTime)
         when "stop"
-            draw_character(@object,"#{@facing}Stop",1)
+            @sprite.draw()
+            draw_character(@sprite,"#{@facing}Stop",1)
         end
     end
     def move_input
+        
         if Gosu.button_down?(InputTrigger::RUN)
             @speed = 1.25
             @animationTime = 5
@@ -58,36 +66,37 @@ class Move_Controller
         vector = Vector2.new(0, 0)
         vector.x = 0
         vector.y = 0
-        collisionDetect = MoveCollision.new(@object)
         
         case @facing
-            when "down"
-                vector.y = @speed
-            when "up"
-                vector.y = -@speed
-            when "right"
-                vector.x = @speed
-            when "left"
-                vector.x = -@speed
-            when "none"
-                vector.x = 0
-                vector.y = 0
+        when "down"
+            vector.y = @speed
+        when "up"
+            vector.y = -@speed
+        when "right"
+            vector.x = @speed
+        when "left"
+            vector.x = -@speed
+        when "none"
+            vector.x = 0
+            vector.y = 0
         end
-
+        
+        collisionDetect = MoveCollision.new(@object)
+        checkBoostArr = [20,1,-16,6]
         if vector.y > 0
-            if collisionDetect.check_surrounding("down",@object) == false
+            if collisionDetect.check_surrounding("down",checkBoostArr[0]) == false
                 @object.y = @object.y + (vector.y * 4)
             end
         elsif vector.y < 0
-            if collisionDetect.check_surrounding("up",@object) == false
+            if collisionDetect.check_surrounding("up",checkBoostArr[1]) == false
                 @object.y = @object.y + (vector.y * 4)
             end
         elsif vector.x > 0
-            if collisionDetect.check_surrounding("right",@object) == false
+            if collisionDetect.check_surrounding("right",checkBoostArr[2]) == false
                 @object.x = @object.x + (vector.x * 4)
             end
         elsif vector.x < 0
-            if collisionDetect.check_surrounding("left",@object) == false
+            if collisionDetect.check_surrounding("left",checkBoostArr[3]) == false
                 @object.x = @object.x + (vector.x * 4)
             end
         end
@@ -96,6 +105,6 @@ class Move_Controller
         move_input()
     end
     def draw
-        setMoveState(@state)
+        setMoveState()
     end
 end

@@ -28,4 +28,3 @@ class MyGame < GameWindow
 end
 game = MyGame.new
 game.show
-gets

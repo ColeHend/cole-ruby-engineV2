@@ -1,11 +1,13 @@
 class Move_NPC
+    include Animate
     attr_accessor :moveArray
-    def initialize(objectToMove,moveType)
+    def initialize(objectToMove,moveType,sprite)
         @objectToMove = objectToMove
         @moveType = moveType
         @moveUpdate = ->(){}
         @moveDraw = ->(){}
         @moveArray = []
+        @sprite = sprite
         @vectorToMove = Vector2.new(@objectToMove.x/32,@objectToMove.y/32)
         @vectorFollow 
         @vectorX
@@ -31,7 +33,7 @@ class Move_NPC
         }
     end
     def move(direction,speed=1,timing = 6)
-        vector = vector2.new(0,0)
+        vector = Vector2.new(0,0)
         collisionDetect = MoveCollision.new(@objectToMove)
         
         case direction
@@ -51,27 +53,31 @@ class Move_NPC
         newXPos = @objectToMove.x + (vector.x * 4)
         newYPos = @objectToMove.y + (vector.y * 4)
         if vector.y > 0
-            if collisionDetect.check_surrounding("down",@objectToMove) == false
+            if collisionDetect.check_surrounding("down",3) == false
                 @objectToMove.y = newYPos
-                draw_character(@objectToMove, "down",timing)
+                @sprite.draw()
+                draw_character(@sprite, "down",timing)
             end
         elsif vector.y < 0
-            if collisionDetect.check_surrounding("up",@objectToMove) == false
+            if collisionDetect.check_surrounding("up",3) == false
                 @objectToMove.y = newYPos
-                draw_character(@objectToMove, "up",timing)
+                @sprite.draw()
+                draw_character(@sprite, "up",timing)
             end
         elsif vector.x > 0
-            if collisionDetect.check_surrounding("right",@objectToMove) == false
+            if collisionDetect.check_surrounding("right",3) == false
                 @objectToMove.x = newXPos
-                draw_character(@objectToMove, "right",timing)
+                @sprite.draw()
+                draw_character(@sprite, "right",timing)
             end
         elsif vector.x < 0
-            if collisionDetect.check_surrounding("left",@objectToMove) == false
+            if collisionDetect.check_surrounding("left",3) == false
                 @objectToMove.x = newXPos
-                draw_character(@objectToMove, "left",timing)
+                @sprite.draw()
+                draw_character(@sprite, "left",timing)
             end
         else 
-            draw_character(@objectToMove, "#{direction}Stop",timing)
+            draw_character(@sprite, "#{direction}Stop",timing)
         end
         
     end
@@ -370,9 +376,11 @@ class Move_NPC
     def update
         @impassArr = $scene_manager.scenes["map"].currentMap.blockedTiles
         @passMap = Array.new($scene_manager.scenes["map"].currentMap.w,Array.new($scene_manager.scenes["map"].currentMap.h,true))
-        $scene_manager.scenes["map"].currentMap.blockedTiles.each{|e|#make impass row
-            @passMap[e.y][e.x] = false
-        }
+        # if $scene_manager.currentMap.blockedTiles.length > 0
+        #     $scene_manager.currentMap.blockedTiles.each{|e|#make impass row
+        #         @passMap[e.y][e.x] = false
+        #     }
+        # end
         if @moveArray.length == 0
             @moveUpdate.call()
         end
@@ -381,6 +389,9 @@ class Move_NPC
     def draw
         if @moveArray.length > 0
             move_execute()
+        else
+            @sprite.draw()
+            draw_character(@sprite, "downStop",1)
         end
     end
 end

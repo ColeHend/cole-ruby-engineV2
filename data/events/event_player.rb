@@ -4,8 +4,9 @@ class Event_Player < Event_Core
     def initialize(mapNumber,eventName,x,y,imgName,bbHeight,bbWidth)
         super(mapNumber,eventName,x,y,"player",0,nil,imgName,4,4,bbHeight,bbWidth)
         @object = GameObject.new(self.x,self.y,self.w,self.h,self.imgName,nil,self.columns,self.rows)
+        
         @facing = "down"
-        @moveControl = Move_Controller.new(@object,@facing)
+        @moveControl = Move_Controller.new(@object,@facing,self.sprite)
         @stats = Battle_Core.new(eventName)
     end
     

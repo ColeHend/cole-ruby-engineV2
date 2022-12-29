@@ -36,7 +36,7 @@ class Scene_Manager
         $scene_manager.scenes["titlescreen"] = TitleScreen.new()
         puts("  loading map scene...")
         $scene_manager.scenes["map"] = Scene_Map.new()
-        $scene_manager.scenes["player"] = Event_Player.new(0,"player",2*32,2*32,:player,46,31)
+        $scene_manager.scenes["player"] = Event_Player.new(0,"player",2*32,2*32,"player",46,31)
         ply = $scene_manager.scenes["player"]
         puts("  loading player...on #{ply.x} #{ply.y}")
         puts("done loading!")
@@ -59,7 +59,7 @@ class Scene_Manager
             @allPaths = pathJSON["paths"]
         end
         puts("done calculating.")
-
+        puts("----------------------------------------")
     end
     def getEffects(animationName,x,y)
         @animations.each{|anim|

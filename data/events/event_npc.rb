@@ -12,7 +12,7 @@ class Event_NPC < Event_Core
         @facing = facing
         @object = GameObject.new(self.x,self.y,self.w,self.h,self.imgName,nil,self.columns,self.rows)
         # puts($scene_manager.allMaps[mapNumber-1].mWidth)
-        @moveController = Move_NPC.new(@object,@moveType)
+        @moveController = Move_NPC.new(@object,@moveType,self.sprite)
         @nature = "neutral"
         @detectRange = 3*32
         @actionController = Action_Core.new(@object,@stats,@moveType,@targetObject,@detectRange,@nature)    

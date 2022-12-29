@@ -1,7 +1,7 @@
 #require_relative "../../../files/animate.rb"
 class Event_Core
     include Animate
-    attr_accessor :eventName,:vector,:passible, :x, :y, :mapNumber, :activateType, :activateEvent, :currPage, :imgName,:facing, :h, :w, :columns, :rows, :bestiaryName
+    attr_accessor :eventName,:vector,:passible, :x, :y,:sprite, :mapNumber, :activateType, :activateEvent, :currPage, :imgName,:facing, :h, :w, :columns, :rows, :bestiaryName
     def initialize(mapNumber,eventName,x,y,activateType,currPage,activateEvent,imgName=nil,columns=4,rows=4,bbHeight=nil,bbWidth=nil,battleCoreName="god")
         @eventName = eventName # Important
         @x,@y = x, y # Important
@@ -16,6 +16,7 @@ class Event_Core
         @w,@h = bbWidth, bbHeight
         @columns,@rows = columns, rows
         @bestiaryName = battleCoreName
+        @sprite = Sprite.new(self.x,self.y,self.imgName,self.columns,self.rows)
     end
     def activate_event
         @activateEvent[@currPage].call

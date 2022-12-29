@@ -61,7 +61,9 @@ class Map_Base
         
         @camera_x = [[(@player.x) - 800 / 2, 0].max, ((@w * 32) + 32) - 800].min
         @camera_y = [[(@player.y) - 600 / 2, 0].max, ((@h * 32) + 32) - 600].min
+        @player.update()
         @events.each_with_index{|evt,index|
+            evt.update()
             if evt.stats.currentHP <= 0
                 @events.delete_at(index)
             end
@@ -81,7 +83,7 @@ class Map_Base
       @player = $scene_manager.scenes["player"]
         @frameNum += 1
         Gosu.translate(-@camera_x, -@camera_y) do
-            #@theMapRecord.draw(0,0,0)
+            @theMapRecord.draw(0,0,0)
             #@playersDraw.call()
             if @events.length > 0
                 @events.each {|e|
@@ -96,7 +98,7 @@ class Map_Base
             else
                 @player.draw
             end
-            #@theMapRecordTop.draw(0,0,0)
+            @theMapRecordTop.draw(0,0,0)
             if @runEffects.length > 0
               @runEffects.each_with_index {|effect,index|
                   if effect.dead
