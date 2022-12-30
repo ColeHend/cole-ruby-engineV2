@@ -11,6 +11,7 @@ class Event_Player < Event_Core
     end
     
     def update
+        super
         @moveControl.update()
     end
     def draw

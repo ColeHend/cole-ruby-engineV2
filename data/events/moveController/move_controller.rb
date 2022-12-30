@@ -82,7 +82,7 @@ class Move_Controller
         end
         
         collisionDetect = MoveCollision.new(@object)
-        checkBoostArr = [20,1,-16,6]
+        checkBoostArr = [20,0,0,6]
         if vector.y > 0
             if collisionDetect.check_surrounding("down",checkBoostArr[0]) == false
                 @object.y = @object.y + (vector.y * 4)

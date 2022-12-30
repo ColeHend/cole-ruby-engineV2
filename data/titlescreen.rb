@@ -11,6 +11,7 @@ class TitleScreen
             $scene_manager = Scene_Manager.new
             $scene_manager.startUp()
             
+            $scene_manager.scenes["player"] = Event_Player.new(0,"player",2*32,8*32,"player",46,31)
             $scene_manager.input.addToStack("map")
             $scene_manager.setScene("map")
         }),

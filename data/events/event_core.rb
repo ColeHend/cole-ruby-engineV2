@@ -16,12 +16,17 @@ class Event_Core
         @w,@h = bbWidth, bbHeight
         @columns,@rows = columns, rows
         @bestiaryName = battleCoreName
-        @sprite = Sprite.new(self.x,self.y,self.imgName,self.columns,self.rows)
+        if @imgName != nil
+            @sprite = Sprite.new(@x,@y,@imgName,@columns,@rows)
+        end
     end
     def activate_event
         @activateEvent[@currPage].call
     end
     def update
+        if @imgName != nil
+            @x, @y = @sprite.x, @sprite.y
+        end
     end
     def draw
     end

@@ -58,16 +58,15 @@ class Map_Base
     end
 
     def update
-        
+        @player.update()
         @camera_x = [[(@player.x) - 800 / 2, 0].max, ((@w * 32) + 32) - 800].min
         @camera_y = [[(@player.y) - 600 / 2, 0].max, ((@h * 32) + 32) - 600].min
-        @player.update()
+        @events.each{|e| e.update()}
         @events.each_with_index{|evt,index|
-            evt.update()
-            if evt.stats.currentHP <= 0
-                @events.delete_at(index)
-            end
-        }
+          if evt.stats.currentHP <= 0
+              @events.delete_at(index)
+          end
+      }
         if @runEffects.length > 0
           @runEffects.each {|effect|
               effect.draw(nil,1,1,0xff,0xffffff,nil)
@@ -87,10 +86,10 @@ class Map_Base
             #@playersDraw.call()
             if @events.length > 0
                 @events.each {|e|
-                  if @player.y >= e.y
+                  if @player.y > e.y
                     e.draw()
                     @player.draw
-                  elsif @player.y < e.y
+                  elsif @player.y <= e.y
                     @player.draw
                     e.draw()
                   end

@@ -20,12 +20,10 @@ class Scene_Manager
     end
     def startUp(startScenes=@startScenes,startWindowSkins=@startWindowSkins,startTilesets=@startTilesets)
         puts("starting Up..")
-        puts("loading windowskins...")
         startWindowSkins.each{|windowskin|
             puts("  loading #{windowskin} windowskin...")
             @windowskins[windowskin] = GameObject.new(0,0,0,0,windowskin,nil,6,4)
         }
-        puts("loading tilesets..")
         startTilesets.each{|tileset|
             puts("  loading #{tileset[0]} tileset...")
             @tilesets[tileset[0]] = GameObject.new(0,0,0,0,tileset[1],nil,tileset[2],tileset[3])
@@ -36,9 +34,6 @@ class Scene_Manager
         $scene_manager.scenes["titlescreen"] = TitleScreen.new()
         puts("  loading map scene...")
         $scene_manager.scenes["map"] = Scene_Map.new()
-        $scene_manager.scenes["player"] = Event_Player.new(0,"player",2*32,2*32,"player",46,31)
-        ply = $scene_manager.scenes["player"]
-        puts("  loading player...on #{ply.x} #{ply.y}")
         puts("done loading!")
         @currentMap = $scene_manager.scenes["map"].currentMap
         @maps = $scene_manager.scenes["map"].allMaps

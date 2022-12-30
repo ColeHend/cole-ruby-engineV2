@@ -14,6 +14,68 @@ class MoveCollision
         end
         return true
     end
+    def collideCheck(targetEvent,event,dir,rangeBoost,evtReturn=true)
+        range = 32
+        range += rangeBoost
+        # if event.is_a?(Event) == true || event.is_a?(GameObject) == true && targetEvent.is_a?(Event) == true || targetEvent.is_a?(GameObject) == true
+            targetX = targetEvent.x
+            targetY = targetEvent.y
+            if defined?(targetEvent.w) != nil
+                targetW = targetEvent.w
+            else
+                targetW = 31
+            end
+            if defined?(targetEvent.h) != nil
+                targetH = targetEvent.h
+            else
+                targetH = 46
+            end
+            eventX = event.x
+            eventY = event.y
+            eventW = event.w
+            eventH = event.h
+            case dir
+                when "up"
+                    if (range + 6) >= (eventY + (eventH) - (targetY + targetH)).abs && ((eventX) - targetX).abs <= (range - 16) #up
+                        if (overlap?(((eventY)...(eventY+eventH)),(targetY...(targetY+targetH-8))) === true) && (overlap?(((eventX)...(eventX+eventW)),((targetX)...(targetX+targetW))) === true)
+                            if evtReturn == true
+                                return event
+                            end
+                            return true
+                        end
+                    end
+                when "down"
+                    if range >= (eventY+(16) - (targetY + targetH)).abs && ((eventX) - targetX).abs <= (range-16) #down
+                        if (overlap?(((eventY)...(eventY+eventH)),(targetY...(targetY+targetH))) === true) && (overlap?(((eventX)...(eventX+eventW)),((targetX)...(targetX+targetW))) === true)
+                            if evtReturn == true
+                                return event
+                            end
+                            return true
+                        end
+                    end
+                when "left"
+                    if (range ) >= ((eventY) - targetY).abs && ((eventX+eventW) - targetX).abs <= (range) #up
+                        if (overlap?(((eventX)...(eventX+eventW)),((targetX)...(targetX+targetW))) === true) && (overlap?(((eventY)...(eventY+eventH)),((targetY+16)...(targetY+targetH))) === true)
+                            if evtReturn == true
+                                return event
+                            end
+                            return true
+                        end
+                    end
+                when "right"
+                    if (range ) >= ((eventY) - targetY).abs && (eventX - (targetX + targetW)).abs <= (range) #up
+                        if (overlap?(((eventX)...(eventX+eventW)),((targetX)...(targetX+targetW))) === true) && (overlap?(((eventY)...(eventY+eventH)),((targetY+16)...(targetY+targetH))) === true)
+                            if evtReturn == true
+                                return event
+                            end
+                            return true
+                        end
+                    end
+            end
+        # else
+            return false
+        # end
+    end
     def closestBlocked()
         @impassArr = $scene_manager.scenes["map"].currentMap.blockedTiles
         arrByClose = []
@@ -84,42 +146,46 @@ class MoveCollision
                     end
                 }
             else
-                theRange = checkRange.select{|item| 
+                # theRange = checkRange.select{|item| 
+                #     case dir
+                #     when "up"
+                #         return item.y < @objectToMove.y
+                #     when "down"
+                #         return item.y > @objectToMove.y
+                #     when "left"
+                #         return item.x < @objectToMove.x
+                #     when "right"
+                #         return item.x > @objectToMove.x
+                #     end
+                # }
+                checkRange.each{|item|
+                    
                     case dir
                     when "up"
-                        return item.y < @objectToMove.y
-                    when "down"
-                        return item.y > @objectToMove.y
-                    when "left"
-                        return item.x < @objectToMove.x
-                    when "right"
-                        return item.x > @objectToMove.x
-                    end
-                }
-                theRange.each{|item|
-                    case dir
-                    when "up"
-                        if item.x == @objectToMove.x && item.y < @objectToMove.y
+                        if collideCheck(@objectToMove,item,dir,0,false) == true
                             toReturn.push(item)
                         end
                     when "down"
-                        if item.x == @objectToMove.x && item.y > @objectToMove.y
+                        if collideCheck(@objectToMove,item,dir,0,false) == true
                             toReturn.push(item)
                         end
                     when "right"
-                        newer = item.x > @objectToMove.x 
-                        puts((@objectToMove.x - item.x).abs)
-                        if (@objectToMove.x - item.x).abs >= 1 && item.y == @objectToMove.y
+                        if collideCheck(@objectToMove,item,dir,0,false) == true
                             toReturn.push(item)
                         end
                     when "left"
-                        if item.x < @objectToMove.x && item.y == @objectToMove.y
+                        if collideCheck(@objectToMove,item,dir,0,false) == true
                             toReturn.push(item)
                         end
                     end
                 }
             end
-            return [toReturn,checkRange]
+            if toReturn.length > 0
+                
+                return [toReturn,checkRange]
+            else
+                return false
+            end
         else
             return false
         end

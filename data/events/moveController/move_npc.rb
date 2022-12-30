@@ -1,36 +1,48 @@
 class Move_NPC
     include Animate
     attr_accessor :moveArray
-    def initialize(objectToMove,moveType,sprite)
+    def initialize(objectToMove,moveType,sprite,mapNum)
         @objectToMove = objectToMove
         @moveType = moveType
-        @moveUpdate = ->(){}
-        @moveDraw = ->(){}
-        @moveArray = []
         @sprite = sprite
+        @mapNum = mapNum
+        @evtName = ""
+        @moveArray = []
         @vectorToMove = Vector2.new(@objectToMove.x/32,@objectToMove.y/32)
         @vectorFollow 
         @vectorX
         @vectorY
-        
+        @state = "stop"
         speed = 0.25
         time = 10
+        @facing = "down"
         @moveLeft = ->(){
-            facing = "left"
-            move(facing,speed,time)
+            @facing = "left"
+            move(@facing,speed,time)
         }
         @moveRight = ->(){
-            facing = "right"
-            move(facing,speed,time)
+            @facing = "right"
+            move(@facing,speed,time)
         }
         @moveUp = ->(){
-            facing = "up"
-            move(facing,speed,time)
+            @facing = "up"
+            move(@facing,speed,time)
         }
         @moveDown = ->(){
-            facing = "down"
-            move(facing,speed,time)
+            @facing = "down"
+            move(@facing,speed,time)
         }
+    end
+    def setState()
+        case @state
+        when "moving"
+            # puts("player state: #{@state}")
+            @sprite.draw()
+            draw_character(@sprite, @facing ,10)
+        when "stop"
+            @sprite.draw()
+            draw_character(@sprite,"#{@facing}Stop",1)
+        end
     end
     def move(direction,speed=1,timing = 6)
         vector = Vector2.new(0,0)
@@ -50,34 +62,56 @@ class Move_NPC
                 vector.y = 0
         end
 
-        newXPos = @objectToMove.x + (vector.x * 4)
-        newYPos = @objectToMove.y + (vector.y * 4)
+        newXPos = @sprite.x + (vector.x * 4)
+        newYPos = @sprite.y + (vector.y * 4)
+        checkCollision = collisionDetect.check_surrounding(direction)
+        if checkCollision != false
+            if checkCollision[0][0].eventName == @evtName
+                checkCollision = false
+            end
+        end
         if vector.y > 0
-            if collisionDetect.check_surrounding("down",3) == false
-                @objectToMove.y = newYPos
-                @sprite.draw()
-                draw_character(@sprite, "down",timing)
+            # puts("#{direction}: #{@sprite.y < ($scene_manager.currentMap.h * 31)}")
+            if @sprite.y < ($scene_manager.currentMap.h * 31)
+                if checkCollision == false
+                    @state = "moving"
+                    @sprite.y = newYPos
+                else
+                    puts(collisionDetect.check_surrounding(direction)[0][0].eventName)
+                end
             end
         elsif vector.y < 0
-            if collisionDetect.check_surrounding("up",3) == false
-                @objectToMove.y = newYPos
-                @sprite.draw()
-                draw_character(@sprite, "up",timing)
+            # puts("#{direction}: #{@sprite.y > 0}")
+            if @sprite.y > 0
+                if checkCollision == false
+                    @sprite.y = newYPos
+                    @state = "moving"
+                else
+                    puts(collisionDetect.check_surrounding(direction)[0][0].eventName)
+                end
             end
         elsif vector.x > 0
-            if collisionDetect.check_surrounding("right",3) == false
-                @objectToMove.x = newXPos
-                @sprite.draw()
-                draw_character(@sprite, "right",timing)
+            # puts("#{direction}: #{@sprite.x < ($scene_manager.currentMap.w * 31)}")
+            if @sprite.x < ($scene_manager.currentMap.w * 31)
+                if checkCollision == false
+                    @sprite.x = newXPos
+                    @state = "moving"
+                else
+                    puts(collisionDetect.check_surrounding(direction)[0][0].eventName)
+                end
             end
         elsif vector.x < 0
-            if collisionDetect.check_surrounding("left",3) == false
-                @objectToMove.x = newXPos
-                @sprite.draw()
-                draw_character(@sprite, "left",timing)
+            # puts("#{direction}: #{@sprite.x < ($scene_manager.currentMap.w * 31)}")
+            if @sprite.x > 0
+                if checkCollision == false
+                    @sprite.x = newXPos
+                    @state = "moving"
+                else
+                    puts(collisionDetect.check_surrounding(direction)[0][0].eventName)
+                end
             end
         else 
-            draw_character(@sprite, "#{direction}Stop",timing)
+            @state = "stop"
         end
         
     end
@@ -320,11 +354,35 @@ class Move_NPC
         end
         return finalPath
     end
-
+    def buildPathStar(objectToFollow)
+        currMap = @mapNum - 1
+        endVect = Vector2.new(objectToFollow.x/32,objectToFollow.y/32)
+        startLoc = [@vectorToMove.x.to_i,@vectorToMove.y.to_i]
+        endLoc = [endVect.x.to_i,endVect.y.to_i]
+        thePath = $scene_manager.allPaths["#{currMap},#{startLoc[0]},#{startLoc[1]},#{endLoc[0]},#{endLoc[1]}"]
+        updatedPath = []
+        currNode = startLoc
+        thePath.each_with_index{|node,index|
+            xPos = node[0] - currNode[0]
+            yPos = node[1] - currNode[1]
+           if yPos < 0 && xPos == 0 #up
+            updatedPath.push("up")
+           elsif yPos > 0 && xPos == 0 #down
+            updatedPath.push("down")
+           elsif yPos == 0 && xPos < 0 #left
+            updatedPath.push("left")
+           elsif yPos == 0 && xPos > 0 #right
+            updatedPath.push("right")
+           end
+           currNode = node
+        }
+        # puts("NPC Path: #{updatedPath}")
+        return updatedPath
+    end
     def follow_path(objectToFollow,facing)
         if objectToFollow != nil
 
-            toMoveDirection = buildPath(objectToFollow)
+            toMoveDirection = buildPathStar(objectToFollow)
             toMoveDirection.each{|dir|
                 case dir
                     when "up"
@@ -357,17 +415,26 @@ class Move_NPC
             @delayStart = Gosu::milliseconds()
         end
     end
-    def set_move(objectToFollow=nil,facing=nil)
+    def set_move(objectToFollow=nil,facing=nil,daEvent=nil)
+        
+        @objectToMove.x, @objectToMove.y = daEvent.x, daEvent.y
+        @sprite.x, @sprite.y = daEvent.x, daEvent.y
+        @vectorToMove = Vector2.new(@objectToMove.x/32,@objectToMove.y/32)
+        @evtName = daEvent.eventName
         case @moveType
         when "random"
             @moveUpdate = ->(){
-                random_path()
             }
+            if @moveArray.length == 0
+                random_path()
+            end
         when "follow"
             if objectToFollow != nil && facing != nil
-                @moveUpdate = ->(){
-                    follow_path(objectToFollow,facing)
-                }
+                @moveArray.clear()
+                follow_path(objectToFollow,facing)
+                # if @moveArray.length == 0
+                #     follow_path(objectToFollow,facing)
+                # end
             end
         when "none"
             @moveUpdate = ->(){}
@@ -376,22 +443,16 @@ class Move_NPC
     def update
         @impassArr = $scene_manager.scenes["map"].currentMap.blockedTiles
         @passMap = Array.new($scene_manager.scenes["map"].currentMap.w,Array.new($scene_manager.scenes["map"].currentMap.h,true))
-        # if $scene_manager.currentMap.blockedTiles.length > 0
-        #     $scene_manager.currentMap.blockedTiles.each{|e|#make impass row
-        #         @passMap[e.y][e.x] = false
-        #     }
-        # end
-        if @moveArray.length == 0
-            @moveUpdate.call()
+
+        if @moveArray.length > 0
+            move_execute()
+        else
+            @state = "stop"
         end
     end
 
     def draw
-        if @moveArray.length > 0
-            move_execute()
-        else
-            @sprite.draw()
-            draw_character(@sprite, "downStop",1)
-        end
+        setState()
+        
     end
 end

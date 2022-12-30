@@ -228,7 +228,7 @@ class AStar
                         path = self.find_path(grid)
                         # Print the path, if one was found.
                         if path
-                            puts "Found a path! MAP: #{index+1},F: (#{startLoc[0]},#{startLoc[1]}),T: (#{endLoc[0]},#{endLoc[1]})"
+                            puts "Found a path! MAP: #{index},F: (#{startLoc[0]},#{startLoc[1]}),T: (#{endLoc[0]},#{endLoc[1]})"
                             currPath = []
                             path.each{|node|
                               currPath.push([node.x,node.y])
