@@ -1,7 +1,7 @@
 class MoveCollision
-    def initialize(objectToMove)
+    def initialize(objectToMove,player=false)
         @objectToMove = objectToMove
-        
+        @isPlayer = player
     end
     def overlap?(r1,r2)
         !(r1.first > r2.last || r1.last < r2.first)
@@ -76,26 +76,26 @@ class MoveCollision
             return false
         # end
     end
-    def closestBlocked()
-        @impassArr = $scene_manager.scenes["map"].currentMap.blockedTiles
-        arrByClose = []
-        arrToReturn = []
-        @impassArr.each{|evt|
-            xDist = ((@objectToMove.x/32) - (evt.y/32)).abs()
-            yDist = ((@objectToMove.y/32) - (evt.y/32)).abs()
-            xyDist = xDist + yDist
-            arrByClose.push([evt,xyDist])
-        }
-        arrByClose.sort_by{|item|item[1]}
-        arrByClose.each{|item|arrToReturn.push(item[0])}
-        return arrToReturn
-    end
+
     def check_range(rangeBoost=0,removeBlock=false)
         range = 32 + rangeBoost
         allInRange = []
-        nearby = closestBlocked()
+        # nearby = closestBlocked()
+        nearby = $scene_manager.currentMap.blockedTiles
+        if @isPlayer == false
+            hasPlayer = false
+            nearby.each{|e|
+                if e.is_a?(Event_Player)
+                    hasPlayer = true
+                end
+            }
+            if hasPlayer == false
+                nearby.push($scene_manager.scenes["player"])
+            end
+        end
+        nearby = nearby.uniq()
         nearby.each_with_index{|item,index|
-            # if !item.is_a?(Block)
+             if item.is_a?(Event_Player) == false || item.is_a?(Event_Player) == true && @isPlayer == false 
                 objWtoM = 46 or item.w
                 objHtoM = 31 or item.h
                 if (range + 6) >= (@objectToMove.y + (objHtoM) - (item.y + item.h)).abs && ((@objectToMove.x) - item.x).abs <= (range - 16)
@@ -108,7 +108,7 @@ class MoveCollision
                         allInRange.push(item)
                     end
                 end
-            # end
+             end
         }
         if removeBlock == true
             toRemove = []
@@ -125,7 +125,9 @@ class MoveCollision
             return [true,allInRange]
         end
     end
+
     def check_surrounding(dir,rangeBoost=0)
+        
         checkR = check_range(rangeBoost)
         checkRange = checkR[1]
         toReturn = []
@@ -146,20 +148,7 @@ class MoveCollision
                     end
                 }
             else
-                # theRange = checkRange.select{|item| 
-                #     case dir
-                #     when "up"
-                #         return item.y < @objectToMove.y
-                #     when "down"
-                #         return item.y > @objectToMove.y
-                #     when "left"
-                #         return item.x < @objectToMove.x
-                #     when "right"
-                #         return item.x > @objectToMove.x
-                #     end
-                # }
                 checkRange.each{|item|
-                    
                     case dir
                     when "up"
                         if collideCheck(@objectToMove,item,dir,0,false) == true

@@ -25,6 +25,7 @@ class Map_Base
                 @blockedTiles.push(e)
             end
         }
+        return @blockedTiles
     end
     def draw_tile_loop()
         mapArrayY = @mapfile['draw']
@@ -58,24 +59,27 @@ class Map_Base
     end
 
     def update
-        @player.update()
-        @camera_x = [[(@player.x) - 800 / 2, 0].max, ((@w * 32) + 32) - 800].min
-        @camera_y = [[(@player.y) - 600 / 2, 0].max, ((@h * 32) + 32) - 600].min
-        @events.each{|e| e.update()}
-        @events.each_with_index{|evt,index|
-          if evt.stats.currentHP <= 0
-              @events.delete_at(index)
+      # -------- player -------
+      @player.update()
+      @camera_x = [[(@player.x) - 800 / 2, 0].max, ((@w * 32) + 32) - 800].min
+      @camera_y = [[(@player.y) - 600 / 2, 0].max, ((@h * 32) + 32) - 600].min
+      # -------- events -------
+      if @events.length > 0
+        @events.each_with_index{|e,i| 
+          e.update()
+          if e.stats.currentHP <= 0
+            @events.delete_at(i)
           end
-      }
-        if @runEffects.length > 0
-          @runEffects.each {|effect|
-              effect.draw(nil,1,1,0xff,0xffffff,nil)
-          }
-        end
-        if @frameNum >= 60
-            currentBlockedTiles()
-            @frameNum = 0
-        end
+        }
+      end
+      # -------- effects -------
+      if @runEffects.length > 0
+        @runEffects.each {|effect|
+            effect.draw(nil,1,1,0xff,0xffffff,nil)
+        }
+      end
+      #-------------------------
+      currentBlockedTiles()
     end
 
     def draw()

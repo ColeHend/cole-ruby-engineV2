@@ -46,7 +46,7 @@ class Action_Core
         end
     end
     def update
-        @evtsInRange = @detection.check_range(@range,true)
+        # @evtsInRange = @detection.check_range(@range,true)
     end
 
     def draw
