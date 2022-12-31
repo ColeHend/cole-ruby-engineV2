@@ -1,6 +1,6 @@
 class Map01 < Map_Base
     def initialize()
-        super(Tileset.new("CastleTown",8,23),30,20,JSON.parse(File.read(File.expand_path("./data/maps/map01.json"))),5)
+        super(Tileset.new("CastleTownExterior",8,23),30,20,JSON.parse(File.read(File.expand_path("./data/maps/map01.json"))),5)
         self.events = [
             Event_NPC.new(1,"Event101",15*32,2*32,"action",0,[->(){}],"ghost",46,31,"downStop"),
             Event_NPC.new(1,"Event102",3*32,15*32,"action",0,[->(){}],"greenMan",46,31,"downStop")

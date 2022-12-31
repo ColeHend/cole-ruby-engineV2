@@ -84,20 +84,28 @@ class Move_Controller
         collisionDetect = MoveCollision.new(@object,true)
         checkBoostArr = [20,0,0,6]
         if vector.y > 0
-            if collisionDetect.check_surrounding("down",checkBoostArr[0]) == false
-                @object.y = @object.y + (vector.y * 4)
+            if @object.y < ($scene_manager.currentMap.h*30)
+                if collisionDetect.check_surrounding("down",checkBoostArr[0]) == false
+                    @object.y = @object.y + (vector.y * 4)
+                end
             end
         elsif vector.y < 0
-            if collisionDetect.check_surrounding("up",checkBoostArr[1]) == false
-                @object.y = @object.y + (vector.y * 4)
+            if @object.y > 0
+                if collisionDetect.check_surrounding("up",checkBoostArr[1]) == false
+                    @object.y = @object.y + (vector.y * 4)
+                end
             end
         elsif vector.x > 0
-            if collisionDetect.check_surrounding("right",checkBoostArr[2]) == false
-                @object.x = @object.x + (vector.x * 4)
+            if @object.x < ($scene_manager.currentMap.w*31)
+                if collisionDetect.check_surrounding("right",checkBoostArr[2]) == false
+                    @object.x = @object.x + (vector.x * 4)
+                end
             end
         elsif vector.x < 0
-            if collisionDetect.check_surrounding("left",checkBoostArr[3]) == false
-                @object.x = @object.x + (vector.x * 4)
+            if @object.x > 0
+                if collisionDetect.check_surrounding("left",checkBoostArr[3]) == false
+                    @object.x = @object.x + (vector.x * 4)
+                end
             end
         end
     end

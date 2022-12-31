@@ -68,7 +68,7 @@ class Move_NPC
         newYPos = @sprite.y + (vector.y * 4)
         
         checkRB = {
-            "down"=>120, "up"=>1,
+            "down"=>20, "up"=>1,
             "right"=>6, "left"=>6
         }
         checkCollision = collisionDetect.check_surrounding(direction,checkRB[direction])
@@ -182,20 +182,24 @@ class Move_NPC
             @delayStart = Gosu::milliseconds()
         end
     end
-    def arrived(nowVector,lastPathEnd)
+    def arrived(nowVector,lastPathEnd,dist=1)
         if lastPathEnd.is_a?(Array) == false
-            lastPathEnd = [lastPathEnd.x,lastPathEnd.y]
-        end
-        if (lastPathEnd[0] + 1) == nowVector.x && lastPathEnd[1] == nowVector.y
-            return true
-        elsif (lastPathEnd[0] - 1) == nowVector.x && lastPathEnd[1] == nowVector.y
-            return true
-        elsif (lastPathEnd[0]) == nowVector.x && lastPathEnd[1] + 1 == nowVector.y
-            return true
-        elsif (lastPathEnd[0]) == nowVector.x && lastPathEnd[1] - 1 == nowVector.y
-            return true
-        elsif ((lastPathEnd[0]) == nowVector.x && lastPathEnd[1] == nowVector.y)
-            return true
+            if defined?(lastPathEnd)
+                lastPathEnd = [lastPathEnd.x,lastPathEnd.y]
+                for d in 1..dist do
+                    if (lastPathEnd[0] + d) == nowVector.x && lastPathEnd[1] == nowVector.y
+                        return true
+                    elsif (lastPathEnd[0] - d) == nowVector.x && lastPathEnd[1] == nowVector.y
+                        return true
+                    elsif (lastPathEnd[0]) == nowVector.x && lastPathEnd[1] + d == nowVector.y
+                        return true
+                    elsif (lastPathEnd[0]) == nowVector.x && lastPathEnd[1] - d == nowVector.y
+                        return true
+                    elsif ((lastPathEnd[0]) == nowVector.x && lastPathEnd[1] == nowVector.y)
+                        return true
+                    end
+                end
+            end
         end
         return false
     end
@@ -214,26 +218,43 @@ class Move_NPC
                 random_path()
             when "follow"
                 daX, daY = objectToFollow.x/32, objectToFollow.y/32
+                nowX, nowY = @sprite.x/32, @sprite.y/32
                 tarVec = Vector2.new(daX.to_i,daY.to_i)
-                nowVector = Vector2.new(@sprite.x/32,@sprite.y/32)
+                nowVector = Vector2.new(nowX.to_i,nowY.to_i)
                 if objectToFollow != nil && facing != nil
-                    # puts("--------Arrived-------")
-                    # puts(arrived(nowVector,@lastPathEnd))
-                    # puts("(#{nowVector.x},#{nowVector.y})")
-                    # puts("(#{@lastPathEnd[0]},#{@lastPathEnd[1]})")
-                    # puts("----------------------")
-                    if arrived(nowVector,tarVec) == false && arrived(nowVector,@lastPathEnd) == true
-                        # puts("---------------------")
-                        # puts("target: (#{tarVec.x},#{tarVec.y})")
-                        # puts("before")
-                        # puts("---------")
-                        # puts("lastPath:(#{@lastPathEnd[0]},#{@lastPathEnd[1]})")
-                        # puts("nowVector: (#{nowVector.x},#{nowVector.y})")
-                        @lastPathEnd = buildPathStar(objectToFollow)
-                        # puts("after")
-                        # puts("---------")
-                        # puts("lastPath:(#{@lastPathEnd[0]},#{@lastPathEnd[1]})")
-                        # puts("nowVector: (#{nowVector.x},#{nowVector.y})")
+                    if arrived(nowVector,tarVec) == false
+                        if arrived(nowVector,@lastPathEnd,3) == true
+                            @lastPathEnd = buildPathStar(objectToFollow)
+                        else
+                            startLoc = [nowVector.x,nowVector.y]
+                            tarLoc = [tarVec.x,tarVec.y]
+                            newPath = AStar.new_path(startLoc,tarLoc)
+                            currNode = startLoc
+                            newPath.each_with_index{|node,index|
+                                xPos = node[0] - currNode[0]
+                                yPos = node[1] - currNode[1]
+                                numTimes = (32 / (0.25 * 4)).to_i
+                                if yPos < 0 && xPos == 0 #up
+                                    numTimes.times{
+                                        @moveArray.push(@moveUp)
+                                    }
+                               elsif yPos > 0 && xPos == 0 #down
+                                numTimes.times{
+                                    @moveArray.push(@moveDown)
+                                }
+                            elsif yPos == 0 && xPos < 0 #left
+                                numTimes.times{
+                                    @moveArray.push(@moveLeft)
+                                }
+                            elsif yPos == 0 && xPos > 0 #right
+                                numTimes.times{
+                                    @moveArray.push(@moveRight)
+                                }
+                            end
+                            currNode = node
+                            }
+                            puts("New path found for #{@evtName}")
+                        end
                     end
                     
                 end

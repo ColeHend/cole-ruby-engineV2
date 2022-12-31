@@ -5,7 +5,7 @@ class AStar
   # to the goal (h_cost). It also has a reference to its parent node, which allows us
   # to trace our path back from the goal to the start.
   class Node
-    attr_accessor :x, :y, :g_cost, :h_cost, :parent
+    attr_accessor :x, :y, :g_cost, :h_cost, :parent, :blocked
 
     def initialize(x, y, g_cost, h_cost, parent)
       @x = x
@@ -54,6 +54,7 @@ class AStar
     
       # Set the blocked cells.
       blocked_cells.each do |x, y|
+        # puts("Blocked: (#{x},#{y})")
         @nodes[x][y].blocked = true
       end
     
@@ -136,7 +137,6 @@ class AStar
       # the closed list. This node will be the one we expand next.
       current_node = open_list.shift
       closed_list.push(current_node)
-      #puts("currentNode:(#{current_node.x},#{current_node.y})")
       # If the current node is the goal, we have found a path. We trace the path
       # back to the start and return it.
       goal = grid.goal
@@ -190,14 +190,31 @@ class AStar
     newNode = ->(loc){
       return Node.new(loc[0], loc[1], 0, 0, nil)
     }
-    map = $scene_manager.currentScene.currentMap
-    blockedSpots = $scene_manager.currentScene.currentMap.blockedTiles
+    map = $scene_manager.currentMap
+    blockedSpots = []
+    blockedTiles = $scene_manager.currentMap.blockedTiles
+    blockedTiles.uniq()
+    blockedTiles.each{|tile|
+      if tile.is_a?(Event_NPC) or tile.is_a?(Event_Player)
+        theX, theY = tile.x/32, tile.y/32
+      else
+        theX, theY = tile.x, tile.y  
+      end
+      blockedSpots.push([theX.to_i,theY.to_i])
+    }
+    if goal[0] != 0
+      goal[0] -= 1
+    else
+      goal[0] += 1
+    end
     grid = Grid.new(map.w, map.h, newNode.call(start), newNode.call(goal), blockedSpots)
     path = self.find_path(grid)
     currPath = []
-    path.each{|node|
-      currPath.push([node.x,node.y])
-    }
+    if path != nil
+      path.each{|node|
+        currPath.push([node.x,node.y])
+      }
+    end
     return currPath
   end
 
