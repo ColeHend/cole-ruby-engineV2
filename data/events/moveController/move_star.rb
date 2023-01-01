@@ -54,8 +54,16 @@ class AStar
     
       # Set the blocked cells.
       blocked_cells.each do |x, y|
-        # puts("Blocked: (#{x},#{y})")
-        @nodes[x][y].blocked = true
+        if x >= width
+          x = width - 1
+        end
+        if y >= height
+          y = height - 1
+        end
+        if defined?(@nodes[x][y])
+          # puts("Blocked: (#{x},#{y})")
+          @nodes[x][y].blocked = true
+        end
       end
     
       # Set the g_cost and h_cost for the start node.

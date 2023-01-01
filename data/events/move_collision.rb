@@ -20,12 +20,12 @@ class MoveCollision
         # if event.is_a?(Event) == true || event.is_a?(GameObject) == true && targetEvent.is_a?(Event) == true || targetEvent.is_a?(GameObject) == true
             targetX = targetEvent.x
             targetY = targetEvent.y
-            if defined?(targetEvent.w) != nil
+            if defined?(targetEvent.w)
                 targetW = targetEvent.w
             else
                 targetW = 31
             end
-            if defined?(targetEvent.h) != nil
+            if defined?(targetEvent.h)
                 targetH = targetEvent.h
             else
                 targetH = 46

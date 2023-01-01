@@ -75,8 +75,13 @@ class Move_NPC
         if checkCollision != false
             blockMove = false
             checkCollision[0].each{|e|
-                if e.eventName != @evtName
+                if e.is_a?(Block)
                     blockMove = true
+                else
+                    if e.eventName != @evtName
+                        blockMove = true
+                    end
+                    
                 end
             }
             if !blockMove
@@ -225,6 +230,7 @@ class Move_NPC
                     if arrived(nowVector,tarVec) == false
                         if arrived(nowVector,@lastPathEnd,3) == true
                             @lastPathEnd = buildPathStar(objectToFollow)
+                            puts("path retrieved for #{@evtName}")
                         else
                             startLoc = [nowVector.x,nowVector.y]
                             tarLoc = [tarVec.x,tarVec.y]

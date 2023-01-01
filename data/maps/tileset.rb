@@ -10,12 +10,12 @@ class Tileset
 
     end
     def addImpass(x,y)
-        @impassableTiles.push(Block.new(x,y,32,32))
+        @impassableTiles.push(Block.new(x,y,30,24))
     end
     def isntPassable(tileNum)
         return @impassTileArr.include?(tileNum)
     end
-    def draw_tile(tile,y,x)
+    def draw_tile(tile,x,y)
         @tilesetIMG.set_animation(tile)
         @tilesetIMG.x = x*32
         @tilesetIMG.y = y*32
@@ -24,7 +24,7 @@ class Tileset
     end
     def add_impass(tile,x,y)
         if isntPassable(tile) == true
-            puts("impass added!")
+            # puts("impass added!")
             addImpass(x*32,y*32)
         end
     end
